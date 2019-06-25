@@ -1,6 +1,6 @@
 function Data()
 {
-
+    
 }
 
 Data.prototype.addMeal = (e) => {
@@ -12,9 +12,9 @@ Data.prototype.addMeal = (e) => {
     const calories = document.getElementById('item-calories').value;
 
     if (itemName.length === 0 || calories.length === 0) {
-        this.showMessage('Please fill in all inputs when adding a meal!', 'error');
+        ui.showMessage('Please fill in all inputs when adding a meal!', 'error');
     } else if (isNaN(calories)) {
-        this.showMessage('Please input a number for the amount of calories.', 'error');
+        ui.showMessage('Please input a number for the amount of calories.', 'error');
     } else {
         ui.addMeal(itemName, calories);
     
@@ -24,12 +24,19 @@ Data.prototype.addMeal = (e) => {
         
         // Add the event listener for editing the meal
         new Data().addEventListenerToEditMeal(editMealIcon, ui);
+        
+        ui.showMessage('Item meal was successfully added!', 'success');
+
+        // Clear all of the inputs
+        ui.clearAllInputs();
     }
 
     e.preventDefault();
 }
 
-Data.prototype.addEventListenerToEditMeal = (mealIcon, UI) => {
+Data.prototype.addEventListenerToEditMeal = (mealIcon) => {
+    const ui = new UI();
+    
     mealIcon.addEventListener('click', function(icon) {
         /* Get all of the meal buttons for hiding, showing,
         and adding event listeners to them */
@@ -41,14 +48,29 @@ Data.prototype.addEventListenerToEditMeal = (mealIcon, UI) => {
         // Get the meal list item
         const mealListItem = icon.target.parentElement.parentElement;
 
-        UI.showEditMealOptions(addMealButton, updateMealButton, deleteMealButton);
+        ui.showEditMealOptions(true);
 
         updateMealButton.addEventListener('click', function(e){
             // Get the meal information inputs
             const mealItem = document.getElementById('item-name').value;
             const calories = document.getElementById('item-calories').value;
 
-            UI.updateMeal(mealItem, calories, mealListItem);
+            if (mealItem.length === 0 || calories.length === 0) {
+                ui.showMessage('Please input the meal item and calories you would like to be updated.', 'error');
+            } else if (isNaN(calories)) {
+                ui.showMessage('Please input a number for the amount of calories.', 'error');
+            } else {
+                ui.updateMeal(mealItem, calories, mealListItem);
+
+                // Hide the edit meal options when updated
+                ui.showEditMealOptions(false);
+
+                // Show success update message
+                ui.showMessage('Meal item successfully updated!', 'success');
+
+                // Clear all of the inputs
+                ui.clearAllInputs();
+            }
 
             e.preventDefault();
         });
@@ -57,17 +79,18 @@ Data.prototype.addEventListenerToEditMeal = (mealIcon, UI) => {
             // Traverse to the list item, and remove it
             mealListItem.remove();
 
-            UI.hideEditMealOptions(addMealButton, updateMealButton, deleteMealButton);
-            UI.showMessage('Meal item successfully deleted!', 'success');
+            ui.showEditMealOptions(false);
         
             e.preventDefault();
         });
 
         backButton.addEventListener('click', function(e){
-            UI.hideEditMealOptions(addMealButton, updateMealButton, deleteMealButton);
+            ui.showEditMealOptions(false);
         
             e.preventDefault();
         });
+
+        icon.preventDefault();
     });
 }
 

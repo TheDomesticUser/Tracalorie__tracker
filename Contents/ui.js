@@ -19,29 +19,20 @@ UI.prototype.addMeal = function(itemName, calories) {
     `;
     // Append the meal list item to the list
     mealList.appendChild(mealListItem);
-    
-    // Show the success message
-    this.showMessage('Item was successfully added!', 'success');
 }
 
 UI.prototype.updateMeal = function(itemName, calories, mealListItem) {
-    if (itemName.length === 0 || calories.length === 0) {
-        this.showMessage('Please input the meal item and calories you would like to be updated.', 'error');
-    } else if (isNaN(calories)) {
-        this.showMessage('Please input a number for the amount of calories.', 'error');
-    } else {
-        // Change the text content of the meal item name
-        mealListItem.firstElementChild.textContent = `${itemName}: `;
+    // Change the text content of the meal item name
+    mealListItem.firstElementChild.textContent = `${itemName}: `;
 
-        // Change the text content of the number of calories element
-        mealListItem.firstElementChild.nextElementSibling.textContent = `${calories} Calories`;
+    // Change the text content of the number of calories element
+    mealListItem.firstElementChild.nextElementSibling.textContent = `${calories} Calories`;
+}
 
-        this.hideEditMealOptions(document.getElementById('addMeal'), document.getElementById('updateMeal'),
-        document.getElementById('deleteMeal'));
+UI.prototype.deleteMeal = function(mealListItem) {
+    mealListItem.remove();
 
-        this.showMessage('Meal item successfully updated!', 'success');
-    
-    }
+    new UI().hideEditMealOptions();
 }
 
 UI.prototype.clearMeals = function() {
@@ -53,16 +44,27 @@ UI.prototype.clearMeals = function() {
     });
 }
 
-UI.prototype.showEditMealOptions = function(addMealButton, updateMealButton, deleteMealButton) {
-    addMealButton.style.visibility = 'hidden';
-    updateMealButton.style.visibility = 'visible';
-    deleteMealButton.style.visibility = 'visible';
+UI.prototype.clearAllInputs = function() {
+    // Get all of the inputs for setting their values to null
+    document.querySelectorAll('input').forEach(function(input){
+        input.value = null;
+    });
 }
 
-UI.prototype.hideEditMealOptions = function(addMealButton, updateMealButton, deleteMealButton) {
-    addMealButton.style.visibility = 'visible';
-    updateMealButton.style.visibility = 'hidden';
-    deleteMealButton.style.visibility = 'hidden';
+UI.prototype.showEditMealOptions = function(trueOrFalse) {
+    const addMealButton = document.getElementById('addMeal');
+    const updateMealButton = document.getElementById('updateMeal');
+    const deleteMealButton = document.getElementById('deleteMeal');
+
+    if (trueOrFalse) {
+        addMealButton.style.visibility = 'hidden';
+        updateMealButton.style.visibility = 'visible';
+        deleteMealButton.style.visibility = 'visible';
+    } else {
+        addMealButton.style.visibility = 'visible';
+        updateMealButton.style.visibility = 'hidden';
+        deleteMealButton.style.visibility = 'hidden';
+    }
 }
 
 UI.prototype.showMessage = function(message, id) {
