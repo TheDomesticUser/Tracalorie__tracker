@@ -49,17 +49,23 @@ UI.prototype.clearAllInputs = function() {
     });
 }
 
-UI.prototype.hideEditMealOptions = function(addMealBtn, updateMealBtn, deleteMealBtn) {
-    updateMealBtn.remove();
-    deleteMealBtn.remove();
-
-    // Get the back button for inserting before
-    const backButton = document.getElementById('backButton');
-
-    // Insert the add meal button before the back button
-    document.getElementById('mealFormRow').insertBefore(
-        addMealBtn, backButton
-    );
+UI.prototype.hideEditMealOptions = function(addMealBtn) {
+    // Get the update and delete meal buttons
+    const updateMealButton = document.getElementById('updateMeal');
+    const deleteMealButton = document.getElementById('deleteMeal');
+   
+    if (updateMealButton && deleteMealButton) {
+        updateMealButton.remove();
+        deleteMealButton.remove();
+        
+        // Get the back button for inserting before
+        const backButton = document.getElementById('backButton');
+        
+        // Insert the add meal button before the back button
+        document.getElementById('mealFormRow').insertBefore(
+            addMealBtn, backButton
+        );
+    }
 }
 
 UI.prototype.showMessage = function(message, id) {
@@ -76,4 +82,10 @@ UI.prototype.showMessage = function(message, id) {
     
     // Set the timeout for the message after 3 seconds
     setTimeout(() => messageParagraph.remove(), 3000);
+}
+
+UI.prototype.setCalorieAmount = function(calories) {
+    // Change the span total calories amount
+    document.querySelector('h3.counter-align span.total-calories')
+    .textContent = calories;
 }

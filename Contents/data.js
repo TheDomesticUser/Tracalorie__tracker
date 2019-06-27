@@ -1,10 +1,10 @@
 function Data()
 {
-    
+    this.calories = 0;
 }
 
 Data.prototype.addMeal = function(e) {
-    // Initialize the UI class
+    // Initialize the classes
     const ui = new UI();
 
     // Get the meal information inputs
@@ -22,11 +22,12 @@ Data.prototype.addMeal = function(e) {
         const editMealIcon = document.getElementById('item-list')
         .lastElementChild.lastElementChild.firstElementChild;
         
+        // Change the calorie amount
+        new Data().changeCalories(calories);
+
         // Add the event listener for editing the meal
         new Data().addEventListenerToEditMeal(editMealIcon);
         
-        ui.showMessage('Item meal was successfully added!', 'success');
-
         // Clear all of the inputs
         ui.clearAllInputs();
     }
@@ -35,7 +36,7 @@ Data.prototype.addMeal = function(e) {
 }
 
 Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
-    mealIcon.addEventListener('click', function() {
+    mealIcon.addEventListener('click', function(icon) {
         const ui = new UI();
         
         // Get the meal form row for inserting before
@@ -74,7 +75,7 @@ Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
             mealFormRow.insertBefore(deleteMealButton, backButton);
             
             // Add the event listeners for the buttons
-            updateMealButton.addEventListener('click', function(){
+            updateMealButton.addEventListener('click', function(e){
                 const meal = document.getElementById('item-name').value;
                 const calories = document.getElementById('item-calories').value;
 
@@ -87,12 +88,37 @@ Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
                     const mealListItem = mealIcon.parentElement.parentElement;
                     
                     ui.updateMeal(mealListItem, meal, calories);
-                    ui.hideEditMealOptions(addMealButton, updateMealButton, deleteMealButton);
+                    ui.hideEditMealOptions(addMealButton);
                     ui.clearAllInputs();
-                    ui.showMessage('Meal item was successfully updated!', 'success');
                 }
+
+                e.preventDefault();
+            });
+
+            deleteMealButton.addEventListener('click', function(e){
+                // Get the list item
+                const mealListItem = mealIcon.parentElement.parentElement;
+
+                // Remove the meal list item
+                ui.deleteMeal(mealListItem);
+
+                ui.hideEditMealOptions(addMealButton);
+                
+                e.preventDefault();
             });
         }
+
+        icon.preventDefault();
     });
 }
 
+Data.prototype.changeCalories = function(calAmount) {
+    // Initialize the UI class
+    const ui = new UI();
+
+    // Add the calorie amount to the calorie instance
+    this.calories += calAmount;
+
+    // Change the total calories through the UI
+    ui.setCalorieAmount(this.calories);
+}
