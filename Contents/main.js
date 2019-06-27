@@ -15,5 +15,5 @@ clearAllButton.addEventListener('click', ui.clearMeals);
 
 // Iterate through each icon, adding an event listener for when it is clicked
 editMealIcons.forEach(function(mealIcon) {
-    data.addEventListenerToEditMeal(mealIcon, ui);
+    data.addEventListenerToEditMeal(mealIcon);
 });

@@ -21,18 +21,16 @@ UI.prototype.addMeal = function(itemName, calories) {
     mealList.appendChild(mealListItem);
 }
 
-UI.prototype.updateMeal = function(itemName, calories, mealListItem) {
+UI.prototype.updateMeal = function(mealListItem, itemName, calories) {
     // Change the text content of the meal item name
     mealListItem.firstElementChild.textContent = `${itemName}: `;
-
+    
     // Change the text content of the number of calories element
     mealListItem.firstElementChild.nextElementSibling.textContent = `${calories} Calories`;
 }
 
 UI.prototype.deleteMeal = function(mealListItem) {
     mealListItem.remove();
-
-    new UI().hideEditMealOptions();
 }
 
 UI.prototype.clearMeals = function() {
@@ -51,20 +49,17 @@ UI.prototype.clearAllInputs = function() {
     });
 }
 
-UI.prototype.showEditMealOptions = function(trueOrFalse) {
-    const addMealButton = document.getElementById('addMeal');
-    const updateMealButton = document.getElementById('updateMeal');
-    const deleteMealButton = document.getElementById('deleteMeal');
+UI.prototype.hideEditMealOptions = function(addMealBtn, updateMealBtn, deleteMealBtn) {
+    updateMealBtn.remove();
+    deleteMealBtn.remove();
 
-    if (trueOrFalse) {
-        addMealButton.style.visibility = 'hidden';
-        updateMealButton.style.visibility = 'visible';
-        deleteMealButton.style.visibility = 'visible';
-    } else {
-        addMealButton.style.visibility = 'visible';
-        updateMealButton.style.visibility = 'hidden';
-        deleteMealButton.style.visibility = 'hidden';
-    }
+    // Get the back button for inserting before
+    const backButton = document.getElementById('backButton');
+
+    // Insert the add meal button before the back button
+    document.getElementById('mealFormRow').insertBefore(
+        addMealBtn, backButton
+    );
 }
 
 UI.prototype.showMessage = function(message, id) {
