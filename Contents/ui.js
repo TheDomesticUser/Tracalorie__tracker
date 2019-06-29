@@ -12,7 +12,7 @@ UI.prototype.addMeal = function(itemName, calories) {
     mealListItem.className = 'collection-item';
     mealListItem.id = 'item-0';
     mealListItem.innerHTML = `
-        <strong>${itemName}: </strong><em>${calories} Calories</em>
+        <strong>${itemName}: </strong><em><span class="listItem-calories">${calories}</span> Calories</em>
         <a href="#" class="secondary-content">
         <i class="fa fa-pencil"></i>
         </a>
@@ -26,7 +26,7 @@ UI.prototype.updateMeal = function(mealListItem, itemName, calories) {
     mealListItem.firstElementChild.textContent = `${itemName}: `;
     
     // Change the text content of the number of calories element
-    mealListItem.firstElementChild.nextElementSibling.textContent = `${calories} Calories`;
+    mealListItem.firstElementChild.nextElementSibling.firstElementChild.textContent = calories;
 }
 
 UI.prototype.deleteMeal = function(mealListItem) {

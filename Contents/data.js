@@ -1,9 +1,9 @@
 function Data()
 {
-    this.calories = 0;
+
 }
 
-Data.prototype.addMeal = function(e) {
+Data.prototype.addMeal = function() {
     // Initialize the classes
     const ui = new UI();
 
@@ -23,20 +23,21 @@ Data.prototype.addMeal = function(e) {
         .lastElementChild.lastElementChild.firstElementChild;
         
         // Change the calorie amount
-        new Data().changeCalories(calories);
+        this.changeCalories(calories);
 
         // Add the event listener for editing the meal
-        new Data().addEventListenerToEditMeal(editMealIcon);
+        this.addEventListenerToEditMeal(editMealIcon);
         
         // Clear all of the inputs
         ui.clearAllInputs();
     }
-
-    e.preventDefault();
 }
 
-Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
-    mealIcon.addEventListener('click', function(icon) {
+Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
+    // Initialize 'this'
+    const self = this;
+    pencilIcon.addEventListener('click', function(icon) {
+        // Initialize the UI class
         const ui = new UI();
         
         // Get the meal form row for inserting before
@@ -84,8 +85,15 @@ Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
                 } else if (isNaN(calories)) {
                     ui.showMessage('Please input a number for the amount of the calories.', 'error');
                 } else {
+                    // Get the original calories for calculation on the total calories
+                    const originalCalories = pencilIcon.parentElement
+                    .previousElementSibling.firstElementChild.textContent;
+                    
                     // Get the meal list item
-                    const mealListItem = mealIcon.parentElement.parentElement;
+                    const mealListItem = pencilIcon.parentElement.parentElement;
+                    
+                    // Add or subtract the calories depending on its condition
+                    self.changeCalories(calories - originalCalories);
                     
                     ui.updateMeal(mealListItem, meal, calories);
                     ui.hideEditMealOptions(addMealButton);
@@ -95,12 +103,18 @@ Data.prototype.addEventListenerToEditMeal = function(mealIcon) {
                 e.preventDefault();
             });
 
-            deleteMealButton.addEventListener('click', function(e){
+            deleteMealButton.addEventListener('click', function(e) {
                 // Get the list item
-                const mealListItem = mealIcon.parentElement.parentElement;
+                const mealListItem = pencilIcon.parentElement.parentElement;
 
                 // Remove the meal list item
                 ui.deleteMeal(mealListItem);
+
+                // Get the calorie amount
+                const calAmount = pencilIcon.parentElement.parentElement.firstElementChild
+                .nextElementSibling.firstElementChild.textContent;
+                
+                self.changeCalories(-calAmount);
 
                 ui.hideEditMealOptions(addMealButton);
                 
@@ -116,9 +130,9 @@ Data.prototype.changeCalories = function(calAmount) {
     // Initialize the UI class
     const ui = new UI();
 
-    // Add the calorie amount to the calorie instance
-    this.calories += calAmount;
-
+    // Get the calorie amount
+    const calorieAmount = parseInt(document.querySelector('h3.counter-align span.total-calories').textContent);
+    
     // Change the total calories through the UI
-    ui.setCalorieAmount(this.calories);
+    ui.setCalorieAmount(calorieAmount + parseInt(calAmount));
 }
