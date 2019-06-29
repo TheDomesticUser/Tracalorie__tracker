@@ -12,7 +12,7 @@ UI.prototype.addMeal = function(itemName, calories) {
     mealListItem.className = 'collection-item';
     mealListItem.id = 'item-0';
     mealListItem.innerHTML = `
-        <strong>${itemName}: </strong><em><span class="listItem-calories">${calories}</span> Calories</em>
+        <strong><span class="meal-item">${itemName}</span>: </strong><em><span class="listItem-calories">${calories}</span> Calories</em>
         <a href="#" class="secondary-content">
         <i class="fa fa-pencil"></i>
         </a>

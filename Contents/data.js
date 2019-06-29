@@ -6,6 +6,7 @@ function Data()
 Data.prototype.addMeal = function() {
     // Initialize the classes
     const ui = new UI();
+    const locStorage = new LocalStorage();
 
     // Get the meal information inputs
     const itemName = document.getElementById('item-name').value;
@@ -16,7 +17,11 @@ Data.prototype.addMeal = function() {
     } else if (isNaN(calories)) {
         ui.showMessage('Please input a number for the amount of calories.', 'error');
     } else {
+        // Add the meal list item in the UI
         ui.addMeal(itemName, calories);
+
+        // Add the meal item to the local storage
+        locStorage.setMealInfo(itemName, calories);
     
         // Get the newly added meal icon for adding an event listener to the edit icon
         const editMealIcon = document.getElementById('item-list')
@@ -36,9 +41,11 @@ Data.prototype.addMeal = function() {
 Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
     // Initialize 'this'
     const self = this;
+
     pencilIcon.addEventListener('click', function(icon) {
-        // Initialize the UI class
+        // Initialize the necessary classes
         const ui = new UI();
+        const locStorage = new LocalStorage();
         
         // Get the meal form row for inserting before
         const mealFormRow = document.getElementById('mealFormRow');
@@ -76,7 +83,7 @@ Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
             mealFormRow.insertBefore(deleteMealButton, backButton);
             
             // Add the event listeners for the buttons
-            updateMealButton.addEventListener('click', function(e){
+            updateMealButton.addEventListener('click', function(e){                
                 const meal = document.getElementById('item-name').value;
                 const calories = document.getElementById('item-calories').value;
 
@@ -85,7 +92,9 @@ Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
                 } else if (isNaN(calories)) {
                     ui.showMessage('Please input a number for the amount of the calories.', 'error');
                 } else {
-                    // Get the original calories for calculation on the total calories
+                    // Get the original meals and calories for calculation and manipulation
+                    const originalMeal = pencilIcon.parentElement.parentElement
+                    .firstElementChild.firstElementChild.textContent;
                     const originalCalories = pencilIcon.parentElement
                     .previousElementSibling.firstElementChild.textContent;
                     
@@ -95,7 +104,12 @@ Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
                     // Add or subtract the calories depending on its condition
                     self.changeCalories(calories - originalCalories);
                     
+                    // Update the meal list item in the UI
                     ui.updateMeal(mealListItem, meal, calories);
+
+                    // Update the meal in the local storage
+                    locStorage.updateMealInfo(originalMeal, originalCalories, meal, calories);
+
                     ui.hideEditMealOptions(addMealButton);
                     ui.clearAllInputs();
                 }
@@ -104,17 +118,23 @@ Data.prototype.addEventListenerToEditMeal = function(pencilIcon) {
             });
 
             deleteMealButton.addEventListener('click', function(e) {
+                // Get the meal information
+                const meal = pencilIcon.parentElement.parentElement
+                .firstElementChild.firstElementChild.textContent;
+                const calAmount = pencilIcon.parentElement.parentElement.firstElementChild
+                .nextElementSibling.firstElementChild.textContent;
+
                 // Get the list item
                 const mealListItem = pencilIcon.parentElement.parentElement;
 
                 // Remove the meal list item
                 ui.deleteMeal(mealListItem);
 
-                // Get the calorie amount
-                const calAmount = pencilIcon.parentElement.parentElement.firstElementChild
-                .nextElementSibling.firstElementChild.textContent;
-                
+                // Subtract the total by the calorie amount
                 self.changeCalories(-calAmount);
+
+                // Remove the meal item from the local storage
+                locStorage.removeMealInfo(meal, calAmount);
 
                 ui.hideEditMealOptions(addMealButton);
                 
